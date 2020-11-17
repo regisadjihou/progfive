@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+      <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1">
+         <title>CIT STUDENTS</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.min.js"></script>
+<!-- bootstrap on github, need to use https for these links -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+   <div class="container">
+      <h2>Select a Major</h2>
+
+      <div style='padding: 5px;'>
+         <button type='button' class='btn btn-info' onClick="getData('CIT')">CIT Majors</button> &nbsp;
+         <button type='button' class="btn btn-info" onClick="getData('BUS')">Business Majors</button>
+      </div>
+
+      <h3>Filter dataset</h3>
+         <div id="majorTable"></div>
+   </div> <!--end container-->
+</body>
+   <!--Handlebars template-->
+   <script type="text/x-handlebars-template" id="tableTemplate">
+      <table class="table table-striped">
+            <tr><th>Name</th><th>Major</th><th>Midterm</th><th>Final</th></tr>
+            {{#each rows}}
+               <tr>
+                    <td>{{name}}</td><td>{{major}}</td><td>{{midterm}}</td><td>{{final}}</td>
+               </tr>
+            {{/each}}
+      </table>
+   </script>
+   
+   <!--ajax code-->
+   <script>
+
+   function getData(selected_major) {
+      var request = new XMLHttpRequest();
+      request.open('GET', 'https://juliabee33.github.io/projectFive/cit5students.json');      
+ 
+      request.onload = function() {                    
+         var data = JSON.parse(request.responseText);    
+
+         major_items = data.filter(getMajor)       
+         function getMajor(item) {
+            return item.major == selected_major;   
+         }
+        
+        if (request.status == 200) {    
+            var templateText = document.getElementById('tableTemplate').innerHTML;
+            var compiledTemplateText = Handlebars.compile(templateText);       
+            compiledHtml = compiledTemplateText({ rows: major_items })          
+            document.getElementById('majorTable').innerHTML = compiledHtml; 
+        }
+        else {
+            document.querySelector('#majorTable').innerHTML = "There was an error";
+        }
+     }
+     
+     request.send(null);
+   }
+   
+   </script>
+
+
+
+
+
+</html>
